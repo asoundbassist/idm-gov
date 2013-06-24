@@ -27,7 +27,6 @@ import java.awt.event.WindowListener;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -43,7 +42,6 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableModel;
 
 import notification.ExportDialog;
 import notification.InvalidLogin;
@@ -97,7 +95,6 @@ public class SearchWindow extends JFrame{
 				
 		        try {
 		            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-		            System.load("C:/sqljdbc_auth.dll");
 		            con = DriverManager.getConnection(connectionUrl);
 					
 		            SearchWindow frame = new SearchWindow();

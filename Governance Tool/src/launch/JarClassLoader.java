@@ -21,7 +21,7 @@
  *
  * $Id: JarClassLoader.java,v 1.38 2013/03/29 15:27:33 mg Exp $
  */
-package function;
+package launch;
 
 import java.applet.AppletContext;
 import java.applet.AppletStub;
@@ -426,7 +426,7 @@ public class JarClassLoader extends ClassLoader {
             if (!dir.exists()) {
                 dir.mkdir();
             }
-            chmod777(dir); // Unix - allow temp directory RW access to all users.
+//            chmod777(dir); // Unix - allow temp directory RW access to all users.
             if (!dir.exists() || !dir.isDirectory()) {
                 throw new JarClassLoaderException(
                         "Cannot create temp directory " + dir.getAbsolutePath());
@@ -437,7 +437,7 @@ public class JarClassLoader extends ClassLoader {
         try {
             fileTmp = File.createTempFile(inf.getName() + ".", null, dirTemp);
             fileTmp.deleteOnExit();
-            chmod777(fileTmp); // Unix - allow temp file deletion by any user
+//            chmod777(fileTmp); // Unix - allow temp file deletion by any user
             byte[] a_by = inf.getJarBytes();
             BufferedOutputStream os = new BufferedOutputStream(
                                       new FileOutputStream(fileTmp));
@@ -1082,12 +1082,14 @@ public class JarClassLoader extends ClassLoader {
         return sName.replace('\\', '/');
     }
 
+    /*
     private void chmod777(File file) {
         file.setReadable(true, false);
         file.setWritable(true, false);
         file.setExecutable(true, false); // Unix: allow content for dir, redundant for file
     }
-
+*/
+    
     private String getFilename4Log(File file) {
         if (logger != null) {
             try {
