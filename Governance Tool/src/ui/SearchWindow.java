@@ -10,14 +10,19 @@
 package ui;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dialog;
 import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.HierarchyEvent;
+import java.awt.event.HierarchyListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
@@ -41,7 +46,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
 
 import notification.ExportDialog;
 import notification.InvalidLogin;
@@ -71,8 +78,9 @@ public class SearchWindow extends JFrame{
 	private Query q;
 	
     // Declare the JDBC objects.
-    static Connection con = null;
-    static Statement stmt = null;
+    protected static Connection con = null;
+    protected static Statement stmt = null;
+    ArrayList<ResultSet> resList = new ArrayList<ResultSet>();
     
     /*
      * This variable determines whether a search has been performed.
@@ -88,6 +96,7 @@ public class SearchWindow extends JFrame{
 	/**
 	 * Launch the application.
 	 */
+	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -138,8 +147,9 @@ public class SearchWindow extends JFrame{
 	}
 	/**
 	 * Create the frame.
+	 * @throws SQLException 
 	 */
-	public SearchWindow() {		
+	public SearchWindow() throws SQLException {		
 		setIconImage(Toolkit.getDefaultToolkit().getImage(SearchWindow.class.getResource("/com/sun/java/swing/plaf/windows/icons/FloppyDrive.gif")));
 		setTitle("Search");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -161,7 +171,6 @@ public class SearchWindow extends JFrame{
 		searchBox.addMouseListener(new ContextMenuMouseListener());
 		
 		//Open context menu when user right-clicks on the search box
-				
 				
 ////////////////Begin tedious addition of visual elements////////////////
 		
@@ -311,11 +320,15 @@ public class SearchWindow extends JFrame{
 				if(e.getStateChange() == ItemEvent.SELECTED){
 					lovValueBox.setSelected(false);
 					lovValueBox.setEnabled(false);
+					
+					nameBox.setSelected(false);
+					nameBox.setEnabled(false);
 				}
 				
 				else{
 					if(lovValueBox.isEnabled() == false && nameBox.isSelected() == false){
 						lovValueBox.setEnabled(true);
+						nameBox.setEnabled(true);
 					}
 				}
 			}
@@ -326,11 +339,15 @@ public class SearchWindow extends JFrame{
 				if(e.getStateChange() == ItemEvent.SELECTED){
 					lovValueBox.setSelected(false);
 					lovValueBox.setEnabled(false);
+					
+					guidBox.setSelected(false);
+					guidBox.setEnabled(false);
 				}
 				
 				else{
 					if(lovValueBox.isEnabled() == false && guidBox.isSelected() == false){
 						lovValueBox.setEnabled(true);
+						guidBox.setEnabled(true);
 					}
 				}
 			}
@@ -449,7 +466,7 @@ public class SearchWindow extends JFrame{
 		objectTypeList.add(attributeGroupBox);
 		objectTypeList.add(viewGroupBox);
 		
-
+		
 		/*
 		 * The user can press the search button to search or press the
 		 * 'enter' key while the text field is selected
@@ -481,12 +498,23 @@ public class SearchWindow extends JFrame{
 				else{
 					
 					q = new Query(objectTypeList, searchTypeList, searchBox.getText().trim());
-					ArrayList<ResultSet> resList = q.doQuery(con, stmt);
+					try {
+						resList = q.doQuery(con, stmt);
+					} catch (SQLException e2) {
+						// TODO Auto-generated catch block
+						e2.printStackTrace();
+					}
 					
+					/*
+					 * Convert the result set into a default table model
+					 * Pack the model into a JTable
+					 * Display the result set in a JOptionPane
+					 */
 					JTable table;
 					try {
 						table = new JTable(Util.buildTableModel(resList));
-						JOptionPane.showMessageDialog(null, new JScrollPane(table));
+						//JOptionPane.showMessageDialog(null, new JScrollPane(table));
+						JTableDisplay showRes = new JTableDisplay(table);
 					} catch (SQLException e1) {
 						e1.printStackTrace();
 					}
@@ -523,14 +551,19 @@ public class SearchWindow extends JFrame{
 				else{
 					
 					q = new Query(objectTypeList, searchTypeList, searchBox.getText().trim());
-					ArrayList<ResultSet> resList = q.doQuery(con, stmt);
+					ArrayList<ResultSet> resList = new ArrayList<ResultSet>();
+					try {
+						resList = q.doQuery(con, stmt);
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					
 					JTable table;
 					try {
 						table = new JTable(Util.buildTableModel(resList));
 						JScrollPane scroll = new JScrollPane(table,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,  
 							    JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-						
 						JOptionPane.showMessageDialog(null, scroll);
 					} catch (SQLException e1) {
 						e1.printStackTrace();
