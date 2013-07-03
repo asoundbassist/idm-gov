@@ -27,7 +27,8 @@ public class ContextMenuMouseListener extends MouseAdapter {
 
     private enum Actions { UNDO, CUT, COPY, PASTE, SELECT_ALL };
 
-    public ContextMenuMouseListener() {
+    @SuppressWarnings("serial")
+	public ContextMenuMouseListener() {
         undoAction = new AbstractAction("Undo") {
 
             public void actionPerformed(ActionEvent ae) {

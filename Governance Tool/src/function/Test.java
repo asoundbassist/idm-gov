@@ -30,17 +30,6 @@ public class Test {
             		"ON LVal.[LOVStepID] = L.[StepID] " +
             		"WHERE LVal.[Value] = 'Deluxe'";
             
-            
-            
-            String sql_ = "SELECT A.[AttributeName], " +
-			"A.[AttributeID], " +
-			"A.[validator], " +
-			"B.[ATTR_DESC] " +
-			"FROM [IDM_GOVERNANCE].[dbo].[ATTR_LIST] B " +
-			"INNER JOIN [IDM_GOVERNANCE].[dbo].[IDM_ATTRIBUTES] A " +
-			"ON A.[AttributeID] = B.[ATTR_GUID] " +
-			"WHERE A.[AttributeName] = 'Expiry Date'";
-            
             ResultSet rs_ = stmt.executeQuery(sql);
             while(rs_.next()){
             	String s = rs_.getString("AttributeName");

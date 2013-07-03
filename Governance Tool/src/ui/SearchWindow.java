@@ -10,19 +10,14 @@
 package ui;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dialog;
 import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.HierarchyEvent;
-import java.awt.event.HierarchyListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
@@ -40,20 +35,18 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableModel;
 
 import notification.ExportDialog;
 import notification.InvalidLogin;
 import notification.InvalidSearchDialog;
 import notification.SearchTypeDialog;
+import function.ComponentResizer;
 import function.ContextMenuMouseListener;
 import function.Query;
 import function.Util;
@@ -134,14 +127,6 @@ public class SearchWindow extends JFrame{
 		            
 		        	e1.printStackTrace();
 		        }
-		        
-		        
-				try {
-					//TODO The initialization of the search window was here.
-					// Replace if needed
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
 			}
 		});
 	}
@@ -501,7 +486,6 @@ public class SearchWindow extends JFrame{
 					try {
 						resList = q.doQuery(con, stmt);
 					} catch (SQLException e2) {
-						// TODO Auto-generated catch block
 						e2.printStackTrace();
 					}
 					
@@ -513,8 +497,21 @@ public class SearchWindow extends JFrame{
 					JTable table;
 					try {
 						table = new JTable(Util.buildTableModel(resList));
-						//JOptionPane.showMessageDialog(null, new JScrollPane(table));
-						JTableDisplay showRes = new JTableDisplay(table);
+
+						JFrame showRes = new JFrame("Search Results");
+
+				        JPanel panel = new JPanel();
+				        panel.setLayout(new BorderLayout());
+
+				        JScrollPane tableContainer = new JScrollPane(table);
+
+				        panel.add(tableContainer, BorderLayout.CENTER);
+				        showRes.getContentPane().add(panel);
+				        @SuppressWarnings("unused")
+						ComponentResizer r = new ComponentResizer(showRes);
+
+				        showRes.pack();
+				        showRes.setVisible(true);
 					} catch (SQLException e1) {
 						e1.printStackTrace();
 					}
@@ -555,16 +552,24 @@ public class SearchWindow extends JFrame{
 					try {
 						resList = q.doQuery(con, stmt);
 					} catch (SQLException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					
 					JTable table;
 					try {
 						table = new JTable(Util.buildTableModel(resList));
-						JScrollPane scroll = new JScrollPane(table,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,  
-							    JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-						JOptionPane.showMessageDialog(null, scroll);
+
+						JFrame showRes = new JFrame("Search Results");
+
+				        JPanel panel = new JPanel();
+				        panel.setLayout(new BorderLayout());
+
+				        JScrollPane tableContainer = new JScrollPane(table);
+
+				        panel.add(tableContainer, BorderLayout.CENTER);
+				        showRes.getContentPane().add(panel);
+				        @SuppressWarnings("unused")
+						ComponentResizer r = new ComponentResizer(showRes);
 					} catch (SQLException e1) {
 						e1.printStackTrace();
 					}

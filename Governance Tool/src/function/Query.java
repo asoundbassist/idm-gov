@@ -174,14 +174,7 @@ public class Query {
 	            			"ON A.[AttributeID] = B.[ATTR_GUID] " +
 	            			"WHERE A.[AttributeName] = \'" + getSearch() + "\'";*/
 	            	
-/*	            	sql = "SELECT [AttributeName], " +
-	            			"[Attribute_GUID], " +
-	            			"[CollectionPath], " +
-	            			"[validator] " +
-	            			"FROM [IDM_GOVERNANCE].[dbo].[CURRENT_NODE_ATTRIBUTE_LOV_MAPPING] " +
-	            			"WHERE [AttributeName] = \'" + getSearch() + "\'";*/
-	            	
-	            	sql = "SELECT * " +
+/*	            	sql = "SELECT * " +
 	            				"FROM [IDM_GOVERNANCE].[dbo].[CURRENT_NODE_ATTRIBUTE_LOV_MAPPING] A LEFT OUTER JOIN " +
 	            					"OPENQUERY(DPR23MMS_SRO01,' " +
 	            			"select CAST(a.nodeid AS VARCHAR(40)) as AttributeInternalID, " +
@@ -204,7 +197,19 @@ public class Query {
 							   "and b.name in (''d7ca3d28-e515-4451-b07e-908194762d66'')') B ON B.AttributeInternalID = A.AttributeInternalID " +
 							"INNER JOIN [IDM_GOVERNANCE].[dbo].[IDM_ATTRIBUTEGROUPLINK_V] C ON C.ATTRIBUTEID = B.ATTRIBUTEINTERNALID " +
 							"INNER JOIN [IDM_GOVERNANCE].[dbo].[IDM_ATTRIBUTEGROUP_V] D ON D.ID = C.ATTRIBUTEGROUPID " +
-							"ORDER BY A.ATTRIBUTENAME, D.NAME";
+							"ORDER BY A.ATTRIBUTENAME, D.NAME";*/
+	            	
+	            	sql = "SELECT " +
+	            				"A.AttributeName, " +
+	            				"A.Attribute_GUID, " +
+	            				"B.NodeName, " +
+	            				"C.NodeID " +
+	            			"FROM IDM_GOVERNANCE.dbo.CURRENT_NODE_ATTRIBUTE_LOV_MAPPING A " +
+	            			"INNER JOIN IDM_GOVERNANCE.dbo.IDM_COLLECTION_NODE_ITEM_COUNTS C " +
+	            				"ON A.CollectionPath = C.CollectionPath " +
+	            			"JOIN IDM_GOVERNANCE.dbo.IDM_COLLECTION_NODE B " +
+	            				"ON A.LowestLevelNodeInternalID = B.StepID " +
+	            			"WHERE A.AttributeName = '" + getSearch() + "'";
 
 	            }
 	            
@@ -240,7 +245,7 @@ public class Query {
 	            //TODO # sub nodes, parent node name/GUID
 	            if(box.equals(colNode) && colNode.isSelected()){
 	            	
-	            	sql = "SELECT LowestLevelNodeInternalID, " +
+/*	            	sql = "SELECT LowestLevelNodeInternalID, " +
 	            			"CollectionPath, " +
 	            			"SubNodeType, " +
 	            			"COUNT(DISTINCT OMSID) AS OMSID_COUNT " +
@@ -264,8 +269,21 @@ public class Query {
 			            	   "AND D.StepID = B.LowestLevelNodeInternalID " +
 			            	   "AND D.NodeID IN ('a6ef05b1-06d5-46b6-9b7e-83740662a177','1a8837bf-1084-4747-adfa-7fd34108182d') " +
 			            	   ") S " +
-			            	"GROUP BY LowestLevelNodeInternalID, CollectionPath, SubNodeType";
-
+			            	"GROUP BY LowestLevelNodeInternalID, CollectionPath, SubNodeType";*/
+	            	
+	            	sql = "SELECT A.CollectionPath, " +
+	            			"A.NodeId, " +
+	            			"A.SubNodeType, " +
+	            			"A.OmsidCount, " +
+	            			"B.NodeName, " +
+	            			"C.AttributeName, " +
+	            			"C.Attribute_GUID " +
+	            			"FROM IDM_GOVERNANCE.dbo.IDM_COLLECTION_NODE_ITEM_COUNTS A " +
+	            			"INNER JOIN IDM_GOVERNANCE.dbo.IDM_COLLECTION_NODE B " +
+	            				"ON A.LowestLevelNodeInternalID = B.StepID " +
+	            				"JOIN IDM_GOVERNANCE.dbo.CURRENT_NODE_ATTRIBUTE_LOV_MAPPING C " +
+	            				"ON C.CollectionPath = A.CollectionPath " +
+	            			"WHERE A.NodeId = '" + getSearch() + "'";
 	            }
 	            
 	            //TODO display group, help text, and names/guids where attribute is locally linked/inherited
@@ -305,7 +323,6 @@ public class Query {
 	            	continue;
 	            else{
 		            rs = stmt.executeQuery(sql);
-		            System.out.println("?");
 		            resultList.add(rs);
 		            sql = "";
 		            continue;

@@ -1,10 +1,5 @@
 package function;
 
-import java.awt.Component;
-import java.awt.Dialog;
-import java.awt.Window;
-import java.awt.event.HierarchyEvent;
-import java.awt.event.HierarchyListener;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -16,9 +11,6 @@ import java.util.Vector;
 import java.util.regex.Pattern;
 
 import javax.swing.JCheckBox;
-import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
-import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 
 import notification.InvalidLogin;
@@ -138,7 +130,7 @@ public class Util {
 			tokenArr.add(token);
 		}
 		
-
+		sc.close();
 		return tokenArr;
 	}
 	//TODO Export method
@@ -183,24 +175,5 @@ public class Util {
 		}
 		
 		return con;
-	}
-		
-	private void showDialog(Component frame, final Component component) {
-		// wrap a scrollpane around the component
-		JScrollPane scrollPane = new JScrollPane(component);
-		// make the dialog resizable
-		component.addHierarchyListener(new HierarchyListener() {
-			public void hierarchyChanged(HierarchyEvent e) {
-				Window window = SwingUtilities.getWindowAncestor(component);
-				if (window instanceof Dialog) {
-					Dialog dialog = (Dialog) window;
-					if (!dialog.isResizable()) {
-						dialog.setResizable(true);
-					}
-				}
-			}
-		});
-		// display them in a message dialog
-		JOptionPane.showMessageDialog(frame, scrollPane);
 	}
 }

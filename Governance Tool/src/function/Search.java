@@ -41,32 +41,19 @@ public class Search {
 			ArrayList<JCheckBox> searchTypeList, ArrayList<JCheckBox> objectTypeList){	//TODO determine return type (if any)
 		//false if there is a single search criterion
 		//true otherwise
-		boolean multiple = false;
-		
-		
-		/*
-		 * This variable determines whether we are searching for GUID,
-		 * name, GUID and name, or LOV value
-		 */
-		String fromWhere = null;
-		/*
-		 * This string will only be used if GUID and Name are both
-		 * selected.
-		 */
-		String fromWhere_1 = null;
-		
+		//TODO re-initialize boolean
+		//boolean multiple = false;
 		
 		
 		//If LOV value is selected, we look at the LOV value table
-		if(checkArr.get(0).isSelected())
-			fromWhere = "LOVValues";
-		else{
+		if(checkArr.get(0).isSelected()) {
+		} else{
 			//GUID search type
-			if(checkArr.get(1).isSelected())
-				fromWhere="Attribute_GUID";
+			if(checkArr.get(1).isSelected()) {
+			}
 			//Name search type
-			if(checkArr.get(2).isSelected())
-				fromWhere_1 = "";
+			if(checkArr.get(2).isSelected()) {
+			}
 		}
 		
 		////////////////BEGIN PARSING AND PREPARATION FOR SEARCH////////////////
