@@ -410,13 +410,15 @@ public class Query {
 						"LEFT OUTER JOIN IDM_GOVERNANCE.dbo.IDM_LOV_VALUES C ON C.LOVStepID = B.StepID " +
 						"LEFT OUTER JOIN IDM_GOVERNANCE.dbo.CURRENT_NODE_ATTRIBUTE_LOV_MAPPING A " +
 						"ON B.StepID = A.LOVInternalID " +
-						"WHERE C.Value = \'" + getSearch() + "\' ";
+						"WHERE C.Value = \'" + searchQueryList.get(0) + "\' ";
 				
-				for(int i=0; i<operandList.size()-1; i++){
-					String sqlMod = operandList.get(i) + "C.Value = \'" + getSearch() + "\'";
-					sql.concat(sqlMod);
+				for(int i=1; i<searchQueryList.size(); i++){
+					String sqlMod = operandList.get(i-1) + " C.Value = \'" + searchQueryList.get(i) + "\'";
+					sql += sqlMod;
 				}
-	            
+				
+				sql += " ORDER BY C.Value";
+				
 	            rs = stmt.executeQuery(sql);
 	            
 	            if(sql == "")

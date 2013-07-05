@@ -124,11 +124,6 @@ public class Search {
 				for(int i=1; i<queryArray.size(); i+=2)
 					queryArray.remove(i);
 				
-				for(String s : queryArray)
-					System.out.println(s);
-				
-				for(String s : operandArray)
-					System.out.println(s);
 				 // Confirm that all operands are spelled correctly.
 				 
 				for(String s : operandArray){
@@ -166,7 +161,7 @@ public class Search {
 		}else{
 			if(multiple){
 				q = new Query(objectTypeList, searchTypeList, 
-						operandArray, queryArray, query);
+						queryArray, operandArray, query);
 				result = q.doQueryMultiple(con, stmt);
 			}
 			else{
