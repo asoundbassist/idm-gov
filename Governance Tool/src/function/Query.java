@@ -490,7 +490,14 @@ public class Query {
 	            				"ON A.CollectionPath = C.CollectionPath " +
 	            			"JOIN IDM_GOVERNANCE.dbo.IDM_COLLECTION_NODE B " +
 	            				"ON A.LowestLevelNodeInternalID = B.StepID " +
-	            			"WHERE A.AttributeName = '" + getSearch() + "'";
+	            			"WHERE A.AttributeName = '" + searchQueryList.get(0) + "'";
+	            	
+					for(int i=1; i<searchQueryList.size(); i++){
+						String sqlMod = operandList.get(i-1) + " A.AttributeName = \'" + searchQueryList.get(i) + "\'";
+						sql += sqlMod;
+					}
+					
+					sql += " ORDER BY A.AttributeName";
 	            	
 	            	for(int i=0; i<operandList.size()-1; i++){
 						String sqlMod = operandList.get(i) + "A.AttributeName = \'" + getSearch() + "\'";
@@ -574,12 +581,14 @@ public class Query {
 	            				"ON A.LowestLevelNodeInternalID = B.StepID " +
 	            				"JOIN IDM_GOVERNANCE.dbo.CURRENT_NODE_ATTRIBUTE_LOV_MAPPING C " +
 	            				"ON C.CollectionPath = A.CollectionPath " +
-	            			"WHERE A.NodeId = '" + getSearch() + "'";
+	            			"WHERE A.NodeId = '" + searchQueryList.get(0) + "'";
 	            	
-	            	for(int i=0; i<operandList.size()-1; i++){
-						String sqlMod = operandList.get(i) + "A.NodeId = \'" + getSearch() + "\'";
-						sql.concat(sqlMod);
+					for(int i=1; i<searchQueryList.size(); i++){
+						String sqlMod = operandList.get(i-1) + " A.NodeId = \'" + searchQueryList.get(i) + "\'";
+						sql += sqlMod;
 					}
+					
+					sql += " ORDER BY A.NodeId";
 	            }
 	            
 	            //TODO display group, help text, and names/guids where attribute is locally linked/inherited
@@ -598,12 +607,14 @@ public class Query {
 	            			"[CollectionPath], " +
 	            			"[validator] " +
 	            			"FROM [IDM_GOVERNANCE].[dbo].[CURRENT_NODE_ATTRIBUTE_LOV_MAPPING] " +
-	            			"WHERE [Attribute_GUID] = \'" + getSearch() + "\'";
+	            			"WHERE [Attribute_GUID] = \'" + searchQueryList.get(0) + "\'";
 	            	
-	            	for(int i=0; i<operandList.size()-1; i++){
-						String sqlMod = operandList.get(i) + "[Attribute_GUID] = \'" + getSearch() + "\'";
-						sql.concat(sqlMod);
+					for(int i=1; i<searchQueryList.size(); i++){
+						String sqlMod = operandList.get(i-1) + " [Attribute_GUID] = \'" + searchQueryList.get(i) + "\'";
+						sql += sqlMod;
 					}
+					
+					sql += " ORDER BY [ATTRIBUTE_GUID]";
 	            }
 	            
 	            if(box.equals(attribGroup) && attribGroup.isSelected()){
@@ -612,12 +623,14 @@ public class Query {
 	            			"FROM [IDM_GOVERNANCE].dbo.[IDM_ATTRIBUTEGROUP_V] G " +
 	            			"INNER JOIN [IDM_GOVERNANCE].dbo.[IDM_ATTRIBUTEGROUPLINK_V] L " +
 	            			"ON G.[ID] = L.[ATTRIBUTEID] " +
-	            			"WHERE L.[ATTRIBUTEGROUPID] = " + getSearch();
+	            			"WHERE L.[ATTRIBUTEGROUPID] = " + searchQueryList.get(0);
 	            	
-	            	for(int i=0; i<operandList.size()-1; i++){
-						String sqlMod = operandList.get(i) + "L.[ATTRIBUTEGROUPID] = \'" + getSearch() + "\'";
-						sql.concat(sqlMod);
+					for(int i=1; i<searchQueryList.size(); i++){
+						String sqlMod = operandList.get(i-1) + " L.[ATTRIBUTEGROUPID] = \'" + searchQueryList.get(i) + "\'";
+						sql += sqlMod;
 					}
+					
+					sql += " ORDER BY L.[ATTRIBUTEGROUPID]";
 	            }
 	            
 	            if(box.equals(viewGroup) && viewGroup.isSelected()){
