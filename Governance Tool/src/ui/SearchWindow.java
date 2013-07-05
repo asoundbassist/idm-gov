@@ -49,8 +49,8 @@ import notification.SearchTypeDialog;
 import function.ComponentResizer;
 import function.ContextMenuMouseListener;
 import function.Query;
+import function.Search;
 import function.Util;
-//import notification.ConnectionDialog; //TODO Utilize connection dialog after database stuff is set up
 
 
 
@@ -469,8 +469,8 @@ public class SearchWindow extends JFrame{
 					 * throw an error
 					 */
 		        
-				if(searchBox.getText().equals("") || searchBox.getText().trim().toCharArray()[0]=='\"'
-						|| searchBox.getText().trim().toCharArray()[0]=='\''){
+				if(searchBox.getText().equals("") /*|| searchBox.getText().trim().toCharArray()[0]=='\"'
+						|| searchBox.getText().trim().toCharArray()[0]=='\''*/){
 					InvalidSearchDialog d = new InvalidSearchDialog();
 					d.setVisible(true);
 					}
@@ -482,9 +482,17 @@ public class SearchWindow extends JFrame{
 					}
 				else{
 					
-					q = new Query(objectTypeList, searchTypeList, searchBox.getText().trim());
+					/*q = new Query(objectTypeList, searchTypeList, searchBox.getText().trim());
 					try {
 						resList = q.doQuery(con, stmt);
+					} catch (SQLException e2) {
+						e2.printStackTrace();
+					}*/
+					
+					//TODO modify boolean to conform with partial check box
+					try {
+						resList = Search.search(searchBox.getText().trim(), false, 
+								searchTypeList, objectTypeList, con, stmt);
 					} catch (SQLException e2) {
 						e2.printStackTrace();
 					}
@@ -534,8 +542,8 @@ public class SearchWindow extends JFrame{
 			public void actionPerformed(ActionEvent arg0) { 
 				boolean checked = Util.isChecked(searchTypeList);
 
-				if(searchBox.getText().equals("") || searchBox.getText().trim().toCharArray()[0]=='\"'
-						|| searchBox.getText().trim().toCharArray()[0]=='\''){
+				if(searchBox.getText().equals("") /*|| searchBox.getText().trim().toCharArray()[0]=='\"'
+						|| searchBox.getText().trim().toCharArray()[0]=='\''*/){
 					InvalidSearchDialog d = new InvalidSearchDialog();
 					d.setVisible(true);
 					}

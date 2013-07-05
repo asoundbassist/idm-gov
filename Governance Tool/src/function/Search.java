@@ -1,8 +1,15 @@
 package function;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+
+import notification.InvalidOperandDialog;
 
 /**
  * 
@@ -36,25 +43,17 @@ public class Search {
 	 * 
 	 * @return 
 	 * 		??
+	 * @throws SQLException 
 	 */
-	public static void search(String query, boolean isPartial, ArrayList<JCheckBox> checkArr,
-			ArrayList<JCheckBox> searchTypeList, ArrayList<JCheckBox> objectTypeList){	//TODO determine return type (if any)
+	public static ArrayList<ResultSet> search(String query, boolean isPartial, 
+			ArrayList<JCheckBox> searchTypeList, ArrayList<JCheckBox> objectTypeList, 
+			Connection con, Statement stmt) throws SQLException{
 		//false if there is a single search criterion
 		//true otherwise
-		//TODO re-initialize boolean
-		//boolean multiple = false;
-		
-		
-		//If LOV value is selected, we look at the LOV value table
-		if(checkArr.get(0).isSelected()) {
-		} else{
-			//GUID search type
-			if(checkArr.get(1).isSelected()) {
-			}
-			//Name search type
-			if(checkArr.get(2).isSelected()) {
-			}
-		}
+		boolean multiple = false;
+		ArrayList<Character> newList = new ArrayList<Character>();
+		ArrayList<String> operandArray = new ArrayList<String>();
+		ArrayList<String> queryArray = new ArrayList<String>();
 		
 		////////////////BEGIN PARSING AND PREPARATION FOR SEARCH////////////////
 		
@@ -64,34 +63,31 @@ public class Search {
 		 * Temporarily disabled multiple search functionality
 		 *
 		 */
-		//TODO Fix multiple search functionality
 		if(query.toCharArray()[0] == '\"')
-			return;
-/*		if(query.toCharArray()[0] == '\"'){
+			;
+		if(query.toCharArray()[0] == '\"'){
 			multiple = true;
 			
-			 * Create new arraylist and put all search terms between quotes in list
+			// Create new arraylist and put all search terms between quotes in list
 			 
-			ArrayList<Character> newList = new ArrayList<Character>();
-			ArrayList<String> tokenArr = new ArrayList<String>();
-			ArrayList<String> newTokenArr = new ArrayList<String>();
+			operandArray = Util.parse(query);
+			for(String s : operandArray)
+				s = s.replaceAll("^\"|\"$", "");
 			
-			tokenArr = Util.parse1(query);
-			
-			
+			/*
 			 * Only perform the rest of the operation if more than one
 			 * item was included in quotes
-			 
-			if(tokenArr.size() > 1){
+			 */ 
+			if(operandArray.size() > 1){
 				
-				 * Add all characters to list
+				 // Add all characters to list
 				 
 				for(char c : query.toCharArray()) {
 					newList.add(c);
 				}
 				
 				
-				 * copy list over to new list
+				 // copy list over to new list
 				 
 				ArrayList<Character> otherList = new ArrayList<Character>();
 				for(int i = 0; i<newList.size(); i++){
@@ -99,59 +95,86 @@ public class Search {
 				}
 				
 				
-				
+				/*
 				 * take out the first element (double quotation marks) and convert
 				 * the resulting product into a string
-				 
+				 */
+				
 				newList.remove(0);
 				String newQuery = Util.getStringRepresentation(newList);
 				
 				// We should now have an arraylist containing all of the operands
-				newTokenArr = Util.parse1(newQuery);
-				
+				queryArray = Util.parse(newQuery);
 				//Ignore leading and trailing whitespace
-				for(String s : newTokenArr)
+				for(String s : queryArray)
 					s.trim();
 				
-				for(String s : tokenArr)
+				for(String s : operandArray)
 					s.trim();
 				
+				operandArray.remove(0);
+				for(int i=1; i<operandArray.size(); i+=2)
+					operandArray.remove(i);
 				
-				 * Confirm that all operands are spelled correctly.
+				for(int i=0; i<operandArray.size(); i+=2){
+					String s = operandArray.get(i);
+					s = s.replaceAll("^\"|\"$", "");
+				}
+				
+				for(int i=1; i<queryArray.size(); i+=2)
+					queryArray.remove(i);
+				
+				for(String s : queryArray)
+					System.out.println(s);
+				
+				for(String s : operandArray)
+					System.out.println(s);
+				 // Confirm that all operands are spelled correctly.
 				 
-				for(String s : newTokenArr){
+				for(String s : operandArray){
 					if(!s.equalsIgnoreCase("and") && !s.equalsIgnoreCase("or")){
 						InvalidOperandDialog badSearch = new InvalidOperandDialog();
 						badSearch.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 						badSearch.setVisible(true);
-						return;
+						return null;
 					}
 				}
 				
-				
+				/*
 				 * We should have n search terms and n-1 operands
 				 * For example, 6 queries should have 5 operands
 				 * Otherwise, throw an error window and abort the search
-				 
-				int ratioCheck = tokenArr.size() - newTokenArr.size();
+				 */
+		
+				int ratioCheck = queryArray.size() - operandArray.size();
 				if(ratioCheck!=1) {
 					InvalidOperandDialog badSearch = new InvalidOperandDialog();
 					badSearch.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 					badSearch.setVisible(true);
-					return;
+					return null;
 				}
 			}
 			////////////////END PARSING AND PREPARATION FOR ACTUAL SEARCH////////////////
 			
-		}*/
-		
-		if(isPartial){
-			return;
-			//TODO Partial search modifications
-		}else{
-			//TODO Exact search modifications
 		}
 		
+		Query q;
+		ArrayList<ResultSet> result = new ArrayList<ResultSet>();
+		
+		if(isPartial){
+			//TODO Partial search modifications
+		}else{
+			if(multiple){
+				q = new Query(objectTypeList, searchTypeList, 
+						operandArray, queryArray, query);
+				result = q.doQueryMultiple(con, stmt);
+			}
+			else{
+				q = new Query(objectTypeList, searchTypeList, query);
+				result = q.doQuery(con, stmt);
+			}
+		}
+		return result;
 	}
 	
 	////////////////Getters and Setters////////////////

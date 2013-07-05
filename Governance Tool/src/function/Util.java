@@ -64,26 +64,6 @@ public class Util {
 		
 		return selected;
 	}
-	
-	/**
-	 * Parses a string according to "AND" and "OR"
-	 * (or "&&" and "||") operands
-	 * 
-	 * @param search 
-	 * 		The query to be parsed
-	 * @return
-	 * 		The parsed string
-	 */
-	public static String[] parse(String search){
-		
-		//TODO clarify organization of operands
-		
-		String[] split = search.split("\"AND\"");
-		
-		for (String i : split) i.trim();	//Take care of whitespace
-		
-		return split; //TODO update return type
-	}
 
 	/**
 	 * Converts an ArrayList containing Characters to a String
@@ -110,7 +90,7 @@ public class Util {
 	 * 		An ArrayList of Strings that were found to be 
 	 * 		surrounded in double quotes
 	 */
-	public static ArrayList<String> parse1(String query){
+	public static ArrayList<String> parse(String query){
 		Scanner sc = new Scanner(query);
 		
 		//This is the pattern we will use

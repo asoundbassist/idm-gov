@@ -11,7 +11,6 @@ public class Test {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 		String connectionUrl="jdbc:sqlserver://CPPCPWCV62W7C:1433;integratedSecurity=true;";
 		
         try {
