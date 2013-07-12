@@ -160,6 +160,20 @@ public class Query {
 	            			"MAPS.[CollectionPath] " +
 	            			"FROM [IDM_GOVERNANCE].[dbo].[20130328_NODE_ATTRIBUTE_MAPS] MAPS " +
 	            			"WHERE MAPS.[AttributeName] = \'" + getSearch() + "\'";*/
+	            	
+	            	sql = "SELECT A.CollectionPath, " +
+	            			"A.NodeId, " +
+	            			"A.SubNodeType, " +
+	            			"A.OmsidCount, " +
+	            			"B.NodeName, " +
+	            			"C.AttributeName, " +
+	            			"C.Attribute_GUID " +
+	            			"FROM IDM_GOVERNANCE.dbo.IDM_COLLECTION_NODE_ITEM_COUNTS A " +
+	            			"INNER JOIN IDM_GOVERNANCE.dbo.IDM_COLLECTION_NODE B " +
+	            				"ON A.LowestLevelNodeInternalID = B.StepID " +
+	            				"JOIN IDM_GOVERNANCE.dbo.CURRENT_NODE_ATTRIBUTE_LOV_MAPPING C " +
+	            				"ON C.CollectionPath = A.CollectionPath " +
+	            			"WHERE B.NodeName = '" + getSearch() + "'";
 	            }
 	            
 	            //TODO display group, help text, and names/guids where attribute is locally linked/inherited
@@ -394,13 +408,6 @@ public class Query {
 		if(lovVal.isSelected()){
 			
 				stmt = con.createStatement();
-	            /*sql = "SELECT L.[LOVName], "
-	            		+ "L.[LOVID], "
-	            		+ "LVal.[Value] "
-	            		+ "FROM [IDM_GOVERNANCE].dbo.[IDM_LOV_VALUES] LVal " +
-	            		"INNER JOIN [IDM_GOVERNANCE].dbo.[IDM_LOV] L " +
-	            		"ON LVal.[LOVStepID] = L.[StepID] " +
-	            		"WHERE LVal.[Value] = \'" + getSearch() + "\'";*/
 				
 				sql = "SELECT DISTINCT B.LOVID, B.LOVName," +
 						" C.Value, " +
@@ -436,24 +443,30 @@ public class Query {
 	        	stmt = con.createStatement();
 	            //TODO # sub nodes, parent node name/GUID
 	            if(box.equals(colNode) && colNode.isSelected()){
-	            	/*sql = "SELECT MAPS.[AttributeName], " +
-	            			"MAPS.[Attribute_GUID], " +
-	            			"MAPS.[SubNodeType], " +
-	            			"MAPS.[CollectionPath] " +
-	            			"FROM [IDM_GOVERNANCE].[dbo].[20130328_NODE_ATTRIBUTE_MAPS] MAPS " +
-	            			"WHERE MAPS.[AttributeName] = \'" + getSearch() + "\'";*/
+	            	
+	            	sql = "SELECT A.CollectionPath, " +
+	            			"A.NodeId, " +
+	            			"A.SubNodeType, " +
+	            			"A.OmsidCount, " +
+	            			"B.NodeName, " +
+	            			"C.AttributeName, " +
+	            			"C.Attribute_GUID " +
+	            			"FROM IDM_GOVERNANCE.dbo.IDM_COLLECTION_NODE_ITEM_COUNTS A " +
+	            			"INNER JOIN IDM_GOVERNANCE.dbo.IDM_COLLECTION_NODE B " +
+	            				"ON A.LowestLevelNodeInternalID = B.StepID " +
+	            				"JOIN IDM_GOVERNANCE.dbo.CURRENT_NODE_ATTRIBUTE_LOV_MAPPING C " +
+	            				"ON C.CollectionPath = A.CollectionPath " +
+	            			"WHERE B.NodeName = '" + searchQueryList.get(0) + "'";
+	            	
+	            	for(int i=1; i<searchQueryList.size(); i++){
+						String sqlMod = operandList.get(i-1) + " A.NodeId = \'" + searchQueryList.get(i) + "\'";
+						sql += sqlMod;
+					}
+	            	
 	            }
 	            
 	            //TODO display group, help text, and names/guids where attribute is locally linked/inherited
 	            else if(box.equals(attribute) && attribute.isSelected()){
-	            	/*sql = "SELECT A.[AttributeName], " +
-	            			"A.[AttributeID], " +
-	            			"A.[validator], " +
-	            			"B.[ATTR_DESC] " +
-	            			"FROM [IDM_GOVERNANCE].[dbo].[ATTR_LIST] B " +
-	            			"INNER JOIN [IDM_GOVERNANCE].[dbo].[IDM_ATTRIBUTES] A " +
-	            			"ON A.[AttributeID] = B.[ATTR_GUID] " +
-	            			"WHERE A.[AttributeName] = \'" + getSearch() + "\'";*/
 	            	
 /*	            	sql = "SELECT * " +
 	            				"FROM [IDM_GOVERNANCE].[dbo].[CURRENT_NODE_ATTRIBUTE_LOV_MAPPING] A LEFT OUTER JOIN " +
@@ -499,9 +512,9 @@ public class Query {
 					
 					sql += " ORDER BY A.AttributeName";
 	            	
-	            	for(int i=0; i<operandList.size()-1; i++){
-						String sqlMod = operandList.get(i) + "A.AttributeName = \'" + getSearch() + "\'";
-						sql.concat(sqlMod);
+	            	for(int i=1; i<searchQueryList.size(); i++){
+						String sqlMod = operandList.get(i-1) + " A.AttributeName = \'" + searchQueryList.get(i) + "\'";
+						sql += sqlMod;
 					}
 
 	            }
@@ -514,11 +527,10 @@ public class Query {
 	            			"ON G.[ID] = L.[ATTRIBUTEID] " +
 	            			"WHERE G.[NAME] = \'" + getSearch() + "\'";
 	            	
-	            	for(int i=0; i<operandList.size()-1; i++){
-						String sqlMod = operandList.get(i) + "G.[NAME] = \'" + getSearch() + "\'";
-						sql.concat(sqlMod);
+	            	for(int i=1; i<searchQueryList.size(); i++){
+						String sqlMod = operandList.get(i-1) + " G.[NAME] = \'" + searchQueryList.get(i) + "\'";
+						sql += sqlMod;
 					}
-	            	
 
 	            }
 	            
@@ -593,14 +605,6 @@ public class Query {
 	            
 	            //TODO display group, help text, and names/guids where attribute is locally linked/inherited
 	            if(box.equals(attribute) && attribute.isSelected()){
-	            	/*sql = "SELECT A.[AttributeName], " +
-	            			"A.[AttributeID], " +
-	            			"A.[validator], " +
-	            			"B.[ATTR_DESC] " +
-	            			"FROM [IDM_GOVERNANCE].[dbo].[ATTR_LIST] B " +
-	            			"INNER JOIN [IDM_GOVERNANCE].[dbo].[IDM_ATTRIBUTES] A " +
-	            			"ON A.[AttributeID] = B.[ATTR_GUID] " +
-	            			"WHERE A.[AttributeID] = " + getSearch();*/
 	            	
 	            	sql = "SELECT [AttributeName], " +
 	            			"[Attribute_GUID], " +

@@ -5,8 +5,6 @@
  * Default search window for governance tool. Contains options for search type and object type for looking through a STEP database.
  */
 
-//TODO Figure out options for export button (specifically file extensions and how to represent the choice
-
 package ui;
 
 import java.awt.BorderLayout;
@@ -247,6 +245,17 @@ public class SearchWindow extends JFrame{
 ////////////////End tedious addition of visual elements////////////////
 		
 		
+		//Add search types to array list
+		searchTypeList.add(lovValueBox);
+		searchTypeList.add(guidBox);
+		searchTypeList.add(nameBox);
+		
+		//Add object types to array list
+		objectTypeList.add(collectionNodeBox);
+		objectTypeList.add(attributeBox);
+		objectTypeList.add(lovBox);
+		objectTypeList.add(attributeGroupBox);
+		objectTypeList.add(viewGroupBox);
 		
 		
 		/*
@@ -308,12 +317,16 @@ public class SearchWindow extends JFrame{
 					
 					nameBox.setSelected(false);
 					nameBox.setEnabled(false);
+					
+					lovBox.setSelected(false);
+					lovBox.setEnabled(false);
 				}
 				
 				else{
 					if(lovValueBox.isEnabled() == false && nameBox.isSelected() == false){
 						lovValueBox.setEnabled(true);
 						nameBox.setEnabled(true);
+						lovBox.setEnabled(true);
 					}
 				}
 			}
@@ -325,6 +338,9 @@ public class SearchWindow extends JFrame{
 					lovValueBox.setSelected(false);
 					lovValueBox.setEnabled(false);
 					
+					lovBox.setSelected(false);
+					lovBox.setEnabled(false);
+					
 					guidBox.setSelected(false);
 					guidBox.setEnabled(false);
 				}
@@ -333,6 +349,36 @@ public class SearchWindow extends JFrame{
 					if(lovValueBox.isEnabled() == false && guidBox.isSelected() == false){
 						lovValueBox.setEnabled(true);
 						guidBox.setEnabled(true);
+						lovBox.setEnabled(true);
+					}
+				}
+			}
+		});
+		
+		lovBox.addItemListener(new ItemListener(){
+			public void itemStateChanged(ItemEvent e){
+				if(e.getStateChange() == ItemEvent.SELECTED){
+					nameBox.setSelected(false);
+					nameBox.setEnabled(false);
+					
+					guidBox.setSelected(false);
+					guidBox.setEnabled(false);
+					
+					for(JCheckBox i : objectTypeList){
+						if(!i.equals(lovBox)){
+							i.setEnabled(false);
+							i.setSelected(false);
+						}
+					}
+				}
+				
+				else{
+					nameBox.setEnabled(true);
+					guidBox.setEnabled(true);
+					
+					for(JCheckBox i : objectTypeList){
+						if(!i.equals(lovBox))
+							i.setEnabled(true);
 					}
 				}
 			}
@@ -439,17 +485,7 @@ public class SearchWindow extends JFrame{
 		///////////////////////////HERE IS WHERE THE ACTUAL SEARCHING IS DONE///////////////////////////
 		////////////////////////////////////////////////////////////////////////////////////////////////
 		
-		//Add search types to array list
-		searchTypeList.add(lovValueBox);
-		searchTypeList.add(guidBox);
-		searchTypeList.add(nameBox);
-		
-		//Add object types to array list
-		objectTypeList.add(collectionNodeBox);
-		objectTypeList.add(attributeBox);
-		objectTypeList.add(lovBox);
-		objectTypeList.add(attributeGroupBox);
-		objectTypeList.add(viewGroupBox);
+
 		
 		
 		/*
@@ -469,8 +505,7 @@ public class SearchWindow extends JFrame{
 					 * throw an error
 					 */
 		        
-				if(searchBox.getText().equals("") /*|| searchBox.getText().trim().toCharArray()[0]=='\"'
-						|| searchBox.getText().trim().toCharArray()[0]=='\''*/){
+				if(searchBox.getText().equals("")){
 					InvalidSearchDialog d = new InvalidSearchDialog();
 					d.setVisible(true);
 					}
@@ -480,15 +515,7 @@ public class SearchWindow extends JFrame{
 						notChecked.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 						notChecked.setVisible(true);
 					}
-				else{
-					
-					/*q = new Query(objectTypeList, searchTypeList, searchBox.getText().trim());
-					try {
-						resList = q.doQuery(con, stmt);
-					} catch (SQLException e2) {
-						e2.printStackTrace();
-					}*/
-					
+				else{					
 					//TODO modify boolean to conform with partial check box
 					try {
 						resList = Search.search(searchBox.getText().trim(), false, 
@@ -553,16 +580,20 @@ public class SearchWindow extends JFrame{
 						notChecked.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 						notChecked.setVisible(true);
 					}
-				else{
-					
-					q = new Query(objectTypeList, searchTypeList, searchBox.getText().trim());
-					ArrayList<ResultSet> resList = new ArrayList<ResultSet>();
+				else{				
+					//TODO modify boolean to conform with partial check box
 					try {
-						resList = q.doQuery(con, stmt);
-					} catch (SQLException e) {
-						e.printStackTrace();
+						resList = Search.search(searchBox.getText().trim(), false, 
+								searchTypeList, objectTypeList, con, stmt);
+					} catch (SQLException e2) {
+						e2.printStackTrace();
 					}
 					
+					/*
+					 * Convert the result set into a default table model
+					 * Pack the model into a JTable
+					 * Display the result set in a JOptionPane
+					 */
 					JTable table;
 					try {
 						table = new JTable(Util.buildTableModel(resList));
@@ -578,6 +609,9 @@ public class SearchWindow extends JFrame{
 				        showRes.getContentPane().add(panel);
 				        @SuppressWarnings("unused")
 						ComponentResizer r = new ComponentResizer(showRes);
+
+				        showRes.pack();
+				        showRes.setVisible(true);
 					} catch (SQLException e1) {
 						e1.printStackTrace();
 					}
