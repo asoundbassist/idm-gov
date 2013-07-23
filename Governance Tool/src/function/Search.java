@@ -59,10 +59,6 @@ public class Search {
 		
 		query = query.trim();			//strip leading and trailing whitespace
 		
-		/*
-		 * Temporarily disabled multiple search functionality
-		 *
-		 */
 		if(query.toCharArray()[0] == '\"')
 			;
 		if(query.toCharArray()[0] == '\"'){
@@ -97,7 +93,7 @@ public class Search {
 				
 				/*
 				 * take out the first element (double quotation marks) and convert
-				 * the resulting product into a string
+				 * the result to a string
 				 */
 				
 				newList.remove(0);
@@ -142,7 +138,10 @@ public class Search {
 				 */
 		
 				int ratioCheck = queryArray.size() - operandArray.size();
+				for(String s : queryArray) System.out.println(s);
+				for(String t : operandArray) System.out.println(t);
 				if(ratioCheck!=1) {
+					System.out.println(ratioCheck);
 					InvalidOperandDialog badSearch = new InvalidOperandDialog();
 					badSearch.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 					badSearch.setVisible(true);

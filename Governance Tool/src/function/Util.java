@@ -121,6 +121,8 @@ public class Util {
 		 Vector<Vector<Object>> data = new Vector<Vector<Object>>();
 		 Vector<String> columnNames = new Vector<String>();
 		 
+		 System.out.println(res.get(0).next());
+		 
 		 for(ResultSet rs : res){
 		    ResultSetMetaData metaData = rs.getMetaData();
 	

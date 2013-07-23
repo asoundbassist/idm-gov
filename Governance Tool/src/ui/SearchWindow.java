@@ -66,7 +66,6 @@ public class SearchWindow extends JFrame{
 	private ArrayList<JCheckBox> checkList = new ArrayList<JCheckBox>();
 	private ArrayList<JCheckBox> searchTypeList = new ArrayList<JCheckBox>();
 	private ArrayList<JCheckBox> objectTypeList = new ArrayList<JCheckBox>();
-	private Query q;
 	
     // Declare the JDBC objects.
     protected static Connection con = null;
