@@ -1,6 +1,11 @@
 package function;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.Scanner;
+import java.util.regex.Pattern;
 
 public class Test {
     static Connection con = null;
@@ -11,6 +16,31 @@ public class Test {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		Pattern pattern = Pattern.compile(
+				"\"[^\"]*\"" +
+				"|'[^']*'"// +
+				//"|[A-Za-z']+"
+				);
+		String token;
+		
+		String test = "\"georgia tech\" and \"maryland\"";
+		Scanner sc = new Scanner(test);
+		while((token = sc.findInLine(pattern)) != null)
+			;//System.out.println(token);
+		
+		String token_;
+		Pattern pattern_ = Pattern.compile(
+				"\"[^\"]*\"" +
+				"|'[^']*'"// +
+				//"|[A-Za-z']+"
+				);
+		String test_ = "georgia tech\" and \"maryland\"";
+		Scanner sc_ = new Scanner(test_);
+		while((token_ = sc_.findInLine(pattern_)) != null)
+			System.out.println(token_);
+			
+		
+		
 		String connectionUrl="jdbc:sqlserver://CPPCPWCV62W7C:1433;integratedSecurity=true;";
 		
         try {

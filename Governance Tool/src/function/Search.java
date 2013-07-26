@@ -59,22 +59,20 @@ public class Search {
 		
 		query = query.trim();			//strip leading and trailing whitespace
 		
-		if(query.toCharArray()[0] == '\"')
-			;
 		if(query.toCharArray()[0] == '\"'){
 			multiple = true;
 			
 			// Create new arraylist and put all search terms between quotes in list
 			 
-			operandArray = Util.parse(query);
-			for(String s : operandArray)
+			queryArray = Util.parse(query);
+			for(String s : queryArray)
 				s = s.replaceAll("^\"|\"$", "");
 			
 			/*
 			 * Only perform the rest of the operation if more than one
 			 * item was included in quotes
 			 */ 
-			if(operandArray.size() > 1){
+			if(queryArray.size() > 1){
 				
 				 // Add all characters to list
 				 
@@ -100,29 +98,26 @@ public class Search {
 				String newQuery = Util.getStringRepresentation(newList);
 				
 				// We should now have an arraylist containing all of the operands
-				queryArray = Util.parse(newQuery);
-				//Ignore leading and trailing whitespace
-				for(String s : queryArray)
-					s.trim();
-				
-				for(String s : operandArray)
-					s.trim();
-				
-				operandArray.remove(0);
-				for(int i=1; i<operandArray.size(); i+=2)
-					operandArray.remove(i);
-				
-				for(int i=0; i<operandArray.size(); i+=2){
-					String s = operandArray.get(i);
-					s = s.replaceAll("^\"|\"$", "");
+				operandArray = Util.parse(newQuery);
+
+				for(int i = 0 ; i < operandArray.size() ; i++){
+					String j = operandArray.get(i);
+					j = j.replaceAll("^\"|\"$", "");
+					j = j.trim();
+					operandArray.set(i, j);
+				}	
+				 
+				for(int i = 0 ; i < queryArray.size() ; i++){
+					String j = queryArray.get(i);
+					j = j.replaceAll("^\"|\"$", "");
+					j = j.trim();
+					queryArray.set(i, j);
 				}
 				
-				for(int i=1; i<queryArray.size(); i+=2)
-					queryArray.remove(i);
-				
+				for(int i=0; i<operandArray.size(); i++){
 				 // Confirm that all operands are spelled correctly.
-				 
-				for(String s : operandArray){
+					String s = operandArray.get(i);
+					
 					if(!s.equalsIgnoreCase("and") && !s.equalsIgnoreCase("or")){
 						InvalidOperandDialog badSearch = new InvalidOperandDialog();
 						badSearch.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -137,11 +132,9 @@ public class Search {
 				 * Otherwise, throw an error window and abort the search
 				 */
 		
+				//TODO De-comment println statements
 				int ratioCheck = queryArray.size() - operandArray.size();
-				for(String s : queryArray) System.out.println(s);
-				for(String t : operandArray) System.out.println(t);
 				if(ratioCheck!=1) {
-					System.out.println(ratioCheck);
 					InvalidOperandDialog badSearch = new InvalidOperandDialog();
 					badSearch.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 					badSearch.setVisible(true);

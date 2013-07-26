@@ -92,14 +92,13 @@ public class Util {
 	 */
 	public static ArrayList<String> parse(String query){
 		Scanner sc = new Scanner(query);
-		
+		Pattern pattern;
 		//This is the pattern we will use
-		Pattern pattern = Pattern.compile(
+		pattern = Pattern.compile(
 				"\"[^\"]*\"" +
-				"|'[^']*'" +
-				"|[A-Za-z']+"
+				"|'[^']*+'"// +
+				//"|[A-Za-z']+"
 				);
-		
 		String token;
 		
 		//Create ArrayList for placing strings
@@ -107,6 +106,7 @@ public class Util {
 		//Each time we find something surrounded in quotes,
 		//We add it to the ArrayList
 		while((token = sc.findInLine(pattern)) != null){
+			token=token.trim();
 			tokenArr.add(token);
 		}
 		
@@ -120,8 +120,6 @@ public class Util {
 
 		 Vector<Vector<Object>> data = new Vector<Vector<Object>>();
 		 Vector<String> columnNames = new Vector<String>();
-		 
-		 System.out.println(res.get(0).next());
 		 
 		 for(ResultSet rs : res){
 		    ResultSetMetaData metaData = rs.getMetaData();
