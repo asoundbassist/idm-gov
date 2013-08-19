@@ -9,6 +9,7 @@
 	<classpathentry exported="true" kind="lib" path="classDll"/>
 	<classpathentry exported="true" kind="lib" path="classDll/sqljdbc_auth.zip"/>
 	<classpathentry kind="lib" path="sqljdbc4.jar"/>
+	<classpathentry kind="lib" path="jxl-2.6.10.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>

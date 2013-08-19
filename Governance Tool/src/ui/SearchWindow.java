@@ -22,6 +22,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -33,6 +34,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -66,6 +68,9 @@ public class SearchWindow extends JFrame{
 	private ArrayList<JCheckBox> checkList = new ArrayList<JCheckBox>();
 	private ArrayList<JCheckBox> searchTypeList = new ArrayList<JCheckBox>();
 	private ArrayList<JCheckBox> objectTypeList = new ArrayList<JCheckBox>();
+	private JTable table = null;
+	
+	private int searched = 0;
 	
     // Declare the JDBC objects.
     protected static Connection con = null;
@@ -446,7 +451,7 @@ public class SearchWindow extends JFrame{
 			}
 		});
 		
-		JButton btnExport = new JButton("Export");
+		final JButton btnExport = new JButton("Export");
 		GridBagConstraints gbc_btnExport = new GridBagConstraints();
 		gbc_btnExport.anchor = GridBagConstraints.NORTHWEST;
 		gbc_btnExport.insets = new Insets(0, 0, 0, 5);
@@ -454,23 +459,7 @@ public class SearchWindow extends JFrame{
 		gbc_btnExport.gridy = 0;
 		panel_1.add(btnExport, gbc_btnExport);
 		
-		//TODO Enable export button after search has been performed
 		btnExport.setEnabled(false);
-		
-		/*
-		 * Initialize prompt regarding whether the user wants to export
-		 * the search results as .xls, .xlsx, or .csv.
-		 */
-		
-		btnExport.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent arg0) { 
-				ExportDialog export = new ExportDialog();
-				export.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-				export.setVisible(true);
-			}
-		});
-		
-		
 		
 		btnReset.setToolTipText("Clears all current search data");
 		btnReset.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -529,9 +518,18 @@ public class SearchWindow extends JFrame{
 					 * Pack the model into a JTable
 					 * Display the result set in a JOptionPane
 					 */
-					JTable table;
 					try {
-						table = new JTable(Util.buildTableModel(resList));
+						boolean doubleCheck = false;
+						String check = "";
+						int i=0;
+						while(!doubleCheck && i<searchTypeList.size()){
+							if(searchTypeList.get(i).isSelected()){
+								doubleCheck = true;
+								check = searchTypeList.get(i).getText();
+							}
+							i++;
+						}
+						table = new JTable(Util.buildTableModel(resList, check));
 
 						JFrame showRes = new JFrame("Search Results");
 
@@ -547,6 +545,7 @@ public class SearchWindow extends JFrame{
 
 				        showRes.pack();
 				        showRes.setVisible(true);
+				        btnExport.setEnabled(true);
 					} catch (SQLException e1) {
 						e1.printStackTrace();
 					}
@@ -595,9 +594,18 @@ public class SearchWindow extends JFrame{
 					 * Pack the model into a JTable
 					 * Display the result set in a JOptionPane
 					 */
-					JTable table;
 					try {
-						table = new JTable(Util.buildTableModel(resList));
+						boolean doubleCheck = false;
+						String check = "";
+						int i=0;
+						while(!doubleCheck && i<searchTypeList.size()){
+							if(searchTypeList.get(i).isSelected()){
+								doubleCheck = true;
+								check = searchTypeList.get(i).getText();
+							}
+							i++;
+						}
+						table = new JTable(Util.buildTableModel(resList, check));
 
 						JFrame showRes = new JFrame("Search Results");
 
@@ -613,6 +621,7 @@ public class SearchWindow extends JFrame{
 
 				        showRes.pack();
 				        showRes.setVisible(true);
+				        btnExport.setEnabled(true);
 					} catch (SQLException e1) {
 						e1.printStackTrace();
 					}
@@ -621,5 +630,25 @@ public class SearchWindow extends JFrame{
 		        }
 		});
 
+		/*
+		 * Initialize prompt regarding whether the user wants to export
+		 * the search results as .xls, .xlsx, or .csv.
+		 */
+		
+		btnExport.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent arg0) { 
+				 try {
+					 	Boolean f = new File("C:\\Docs\\").mkdir();
+					 	if(f)
+					 		JOptionPane.showMessageDialog(null, "New Directory Created at C:\\Docs\\");
+	                    Util.fillData(table, new File("C:\\Docs\\result.xls"));
+	                    JOptionPane.showMessageDialog(null, "Data saved at " +
+	                            "'C: \\ Docs \\ result.xls' successfully", "Message",
+	                            JOptionPane.INFORMATION_MESSAGE);
+	                } catch (Exception e) {
+	                    e.printStackTrace();
+	                }
+			}
+		});
 	}
 }

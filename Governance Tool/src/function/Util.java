@@ -1,5 +1,7 @@
 package function;
 
+import java.io.File;
+import java.lang.Boolean;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -11,7 +13,12 @@ import java.util.Vector;
 import java.util.regex.Pattern;
 
 import javax.swing.JCheckBox;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+
+import jxl.*;
+import jxl.write.*;
 
 import notification.InvalidLogin;
 
@@ -115,7 +122,7 @@ public class Util {
 	}
 	//TODO Export method
 	
-	public static DefaultTableModel buildTableModel(ArrayList<ResultSet> res)
+	public static DefaultTableModel buildTableModel(ArrayList<ResultSet> res, String searchType)
 	        throws SQLException {
 
 		 Vector<Vector<Object>> data = new Vector<Vector<Object>>();
@@ -156,4 +163,32 @@ public class Util {
 		
 		return con;
 	}
+	
+	public static void fillData(JTable table, File file) {
+
+        try {
+
+            WritableWorkbook workbook1 = Workbook.createWorkbook(file);
+            WritableSheet sheet1 = workbook1.createSheet("First Sheet", 0);
+            TableModel model = table.getModel();
+
+            for (int i = 0; i < model.getColumnCount(); i++) {
+                Label column = new Label(i, 0, model.getColumnName(i));
+                sheet1.addCell(column);
+            }
+            int j = 0;
+            for (int i = 0; i < model.getRowCount(); i++) {
+                for (j = 0; j < model.getColumnCount(); j++) {
+                    Label row = new Label(j, i + 1,
+                            model.getValueAt(i, j).toString());
+                    sheet1.addCell(row);
+                }
+            }
+            workbook1.write();
+            workbook1.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
 }

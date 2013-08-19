@@ -422,17 +422,17 @@ public class Query {
 						"A.AttributeName, " +
 						"A.Attribute_GUID " +
 						"FROM IDM_GOVERNANCE.dbo.IDM_LOV B " +
-						"LEFT OUTER JOIN IDM_GOVERNANCE.dbo.IDM_LOV_VALUES C ON C.LOVStepID = B.StepID " +
-						"LEFT OUTER JOIN IDM_GOVERNANCE.dbo.CURRENT_NODE_ATTRIBUTE_LOV_MAPPING A " +
+						"INNER JOIN IDM_GOVERNANCE.dbo.IDM_LOV_VALUES C ON C.LOVStepID = B.StepID " + //Left outer join
+						"INNER JOIN IDM_GOVERNANCE.dbo.CURRENT_NODE_ATTRIBUTE_LOV_MAPPING A " + //Left outer join
 						"ON B.StepID = A.LOVInternalID " +
-						"WHERE C.Value = \'" + searchQueryList.get(0) + "\' ";
+						"WHERE C.Value = \'" + searchQueryList.get(0) + "\'";
 				
 				for(int i=1; i<searchQueryList.size(); i++){
 					String sqlMod = operandList.get(i-1) + " C.Value = \'" + searchQueryList.get(i) + "\'";
 					sql += sqlMod;
 				}
 				
-				sql += " ORDER BY A.Attribute_GUID";
+				sql += " ORDER BY B.LOVID";
 				
 	            rs = stmt.executeQuery(sql);
 	            
@@ -440,6 +440,8 @@ public class Query {
 	            	;
 	            else{
 		            rs = stmt.executeQuery(sql);
+		            
+		            sql = "";
 		            resultList.add(rs);
 		            sql = "";
 	            }
