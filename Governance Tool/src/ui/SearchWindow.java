@@ -406,27 +406,27 @@ public class SearchWindow extends JFrame{
 		/*
 		 * Sets all check boxes to blank and clears the search box.
 		 */
-		final JCheckBox matchBox = new JCheckBox("Exact Match");
-		matchBox.setToolTipText("Shows only results that contain the exact text entered");
-		matchBox.setHorizontalAlignment(SwingConstants.LEFT);
+		final JCheckBox partial = new JCheckBox("Partial Search");
+		partial.setToolTipText("Displays results containing the search term(s) entered");
+		partial.setHorizontalAlignment(SwingConstants.LEFT);
 		GridBagConstraints gbc_matchBox = new GridBagConstraints();
 		gbc_matchBox.anchor = GridBagConstraints.NORTHWEST;
 		gbc_matchBox.insets = new Insets(0, 0, 0, 5);
 		gbc_matchBox.gridx = 0;
 		gbc_matchBox.gridy = 0;
-		panel_1.add(matchBox, gbc_matchBox);
-		checkList.add(matchBox);
+		panel_1.add(partial, gbc_matchBox);
+		checkList.add(partial);
 		
 		//TODO re-enable check box
-		matchBox.setEnabled(false);
+		partial.setEnabled(false);
 		
 		/*
 		 * If the exact match check box is selected, set the partial
 		 * boolean to false
 		 */
-		matchBox.addActionListener(new ActionListener(){
+		partial.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent arg0) {
-				if(matchBox.isSelected()==true)
+				if(partial.isSelected()==true)
 					isPartial=false;
 			}
 		});
@@ -507,7 +507,7 @@ public class SearchWindow extends JFrame{
 				else{					
 					//TODO modify boolean to conform with partial check box
 					try {
-						resList = Search.search(searchBox.getText().trim(), false, 
+						resList = Search.search(searchBox.getText().trim(), partial, 
 								searchTypeList, objectTypeList, con, stmt);
 					} catch (SQLException e2) {
 						e2.printStackTrace();
@@ -583,7 +583,7 @@ public class SearchWindow extends JFrame{
 				else{				
 					//TODO modify boolean to conform with partial check box
 					try {
-						resList = Search.search(searchBox.getText().trim(), false, 
+						resList = Search.search(searchBox.getText().trim(), partial, 
 								searchTypeList, objectTypeList, con, stmt);
 					} catch (SQLException e2) {
 						e2.printStackTrace();

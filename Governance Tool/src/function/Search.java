@@ -45,7 +45,7 @@ public class Search {
 	 * 		??
 	 * @throws SQLException 
 	 */
-	public static ArrayList<ResultSet> search(String query, boolean isPartial, 
+	public static ArrayList<ResultSet> search(String query, JCheckBox partial, 
 			ArrayList<JCheckBox> searchTypeList, ArrayList<JCheckBox> objectTypeList, 
 			Connection con, Statement stmt) throws SQLException{
 		//false if there is a single search criterion
@@ -148,19 +148,17 @@ public class Search {
 		Query q;
 		ArrayList<ResultSet> result = new ArrayList<ResultSet>();
 		
-		if(isPartial){
-			//TODO Partial search modifications
-		}else{
-			if(multiple){
-				q = new Query(objectTypeList, searchTypeList, 
-						queryArray, operandArray, query);
-				result = q.doQueryMultiple(con, stmt);
-			}
-			else{
-				q = new Query(objectTypeList, searchTypeList, query);
-				result = q.doQuery(con, stmt);
-			}
+		
+		if(multiple){
+			q = new Query(objectTypeList, searchTypeList, 
+					queryArray, operandArray, query);
+			result = q.doQueryMultiple(con, stmt, partial);
 		}
+		else{
+			q = new Query(objectTypeList, searchTypeList, query);
+			result = q.doQuery(con, stmt, partial);
+		}
+		
 		return result;
 	}
 	
