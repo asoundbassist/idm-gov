@@ -570,7 +570,6 @@ public class SearchWindow extends JFrame{
 
 				if(searchBox.getText().equals("") /*|| searchBox.getText().trim().toCharArray()[0]=='\"'
 						|| searchBox.getText().trim().toCharArray()[0]=='\''*/){
-					System.out.println("blank box");
 					InvalidSearchDialog d = new InvalidSearchDialog();
 					d.setVisible(true);
 					}

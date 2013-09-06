@@ -130,11 +130,15 @@ public class Search {
 				 * We should have n search terms and n-1 operands
 				 * For example, 6 queries should have 5 operands
 				 * Otherwise, throw an error window and abort the search
+				 * 
+				 * The one exception to this rule is if there is a single
+				 * search query contained in quotes with no operands.
+				 * This will be ignored and treated as a single search
+				 * term.
 				 */
 		
-				//TODO De-comment println statements
 				int ratioCheck = queryArray.size() - operandArray.size();
-				if(ratioCheck!=1) {
+				if((ratioCheck!=1) || (queryArray.size() == 1 && operandArray.size() == 0)) {
 					InvalidOperandDialog badSearch = new InvalidOperandDialog();
 					badSearch.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 					badSearch.setVisible(true);
